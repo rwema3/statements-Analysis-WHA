@@ -254,3 +254,33 @@ p_h3_blue <- ggplot(df_h3, aes(group, fill = mismatch)) +
 p_h3_blue
 
 P3
+
+##     chisq_h3$p.value < 0.05               ##
+##   “Low-Talk / High-Policy”  (RRR↑, p<.05) ##
+##   “High-Talk / Low-Policy” (RRR↑, p<.05)  ##
+##END
+
+
+#---------P1-----------
+library(ggplot2)
+library(gridExtra)
+library(grid)
+library(Cairo)
+library(cowplot)
+library(gtable)
+library(ggplotify)
+
+UNFCCC_country <- read.csv("path/UNFCCC_4_Group_Classification.csv")
+colnames(UNFCCC_country) = c("country","iso3","Group","unfccc_group")
+
+theme_group <- tibble(
+  theme = c("ADP", "CAP", "TRN", "GOV", "EQU", "FIN", "TEC", "MIT", "IMP", "RSP", "LND"),
+  group = c("System Capacity", "System Capacity", "System Capacity",
+            "Governance & Equity", "Governance & Equity",
+            "Finance & Technology", "Finance & Technology", "Finance & Technology",
+            "Health Risk & Loss", "Health Risk & Loss", "Health Risk & Loss"),
+  theme_full = c(
+    "Adaptation &\n Resilience", "Capacity-building", "Transparency\n& Stocktake",
+    "Governance", "Equity &\n Empowerment",
+    "Finance &\n Mobilization", "Technology &\n Innovation", "Mitigation",
+    "Impacts &\n Co-benefits", "Response &\n Transition", "Loss & Damage"))
