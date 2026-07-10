@@ -100,3 +100,20 @@ P2 <- ggplot(map_total) +
   coord_sf(expand = FALSE)
 P2
 ##END
+
+#--------law and policy data clean------------
+library(tidyverse)
+library(janitor)     
+library(countrycode)
+
+data_dir <- "path/disease and policy"
+law_raw <- read_csv(file.path(data_dir, "global climate laws.csv"),   show_col_types = FALSE) %>%
+  clean_names() 
+pol_raw <- read_csv(file.path(data_dir, "global climate policy.csv"), show_col_types = FALSE) %>%
+  clean_names()
+
+custom_iso <- c(
+  "XKX" = "XKX",     
+  "EU"  = "EUU", "EUR" = "EUU",
+  "TWN" = "TWN"   
+)
