@@ -141,3 +141,19 @@ process_df <- function(df, date_col){
            year,
            file_name = document_title)
 }
+
+law_clean <- process_df(law_raw, "family_publication_date")
+pol_clean <- process_df(pol_raw, "family_publication_date")
+
+law_count <- law_clean %>% count(iso3, year, name = "law_n")
+pol_count <- pol_clean %>% count(iso3, year, name = "policy_n")
+
+summary_tbl <- full_join(law_count, pol_count, by = c("iso3", "year")) %>% 
+  replace_na(list(law_n = 0, policy_n = 0)) %>% 
+  arrange(iso3, year)
+
+write_csv(law_clean,  file.path(data_dir, "global_climate_laws_clean.csv"))
+write_csv(pol_clean,  file.path(data_dir, "global_climate_policy_clean.csv"))
+write_csv(summary_tbl, file.path(data_dir, "global_climate_law_policy_summary.csv"))
+##END
+
