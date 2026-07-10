@@ -189,4 +189,23 @@ df_h3 <- map_total |>
 talk_thr   <- median(df_h3$total_mentions, na.rm = TRUE)
 policy_thr <- median(df_h3$policy_total  , na.rm = TRUE)
 
-y
+
+df_h3 <- df_h3 %>%
+  mutate(mismatch = recode(mismatch,
+                           "Low-Talk  / Low-Policy"  = "Low-Policy / Low-Talk",
+                           "High-Talk / Low-Policy"  = "High-Policy / Low-Talk",
+                           "Low-Talk  / High-Policy" = "Low-Policy / High-Talk",
+                           "High-Talk / High-Policy" = "High-Policy / High-Talk"
+  )) %>%
+  mutate(mismatch = factor(mismatch, levels = c(
+    "Low-Policy / Low-Talk",
+    "High-Policy / Low-Talk",
+    "Low-Policy / High-Talk",
+    "High-Policy / High-Talk"
+  )))
+tab_h3   <- table(df_h3$mismatch, df_h3$income_grp)
+chisq_h3 <- chisq.test(tab_h3)            
+
+print(tab_h3)
+print(chisq_h3)
+
