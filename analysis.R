@@ -319,3 +319,51 @@ make_rose <- function(df, group_label, show_legend = FALSE) {
     scale_fill_manual(values = group_colors) +
     theme_minimal(base_size = 12) +
     labs(title = group_label, x = NULL, y = NULL, fill = NULL) +
+    theme(
+      axis.text.x = element_text(size = 11, colour = "black"),
+      axis.text.y = element_blank(),
+      axis.title = element_blank(),
+      axis.ticks = element_blank(),
+      panel.grid  = element_blank(),
+      legend.text = element_text(size = 12), 
+      plot.title  = element_text(hjust = .5, face = "bold", size = 12),
+      legend.position = "bottom",
+      plot.margin = margin(20, 20, 20, 20)
+    ) + guides(fill = if (show_legend) "legend" else "none")
+}
+
+add_margin <- function(p, top = 10, right = 10, bottom = 10, left = 10) {
+  p + theme(plot.margin = margin(t = top, r = right, b = bottom, l = left))
+}
+
+set_clip_off <- function(p) {
+  g <- ggplotGrob(p)
+  g$layout$clip[g$layout$name == "panel"] <- "off"
+  g
+}
+
+p_A0 <- make_rose(df_long1, "OECD donors",  show_legend = FALSE)
+p_B0 <- make_rose(df_long1, "Transition economies",  show_legend = FALSE)
+p_C0 <- make_rose(df_long1, "Emerging emitters",    show_legend = FALSE)
+p_D0 <- make_rose(df_long1, "Vulnerable group",  show_legend = FALSE)
+
+
+p_A_legend <- make_rose(df_long1, "OECD donors", show_legend = TRUE)
+
+p_A <- add_margin(p_A0, bottom = 10, right = 0)
+p_B <- add_margin(p_B0, bottom = 10, left  = 0)
+p_C <- add_margin(p_C0, top    = 10, right = 0)
+p_D <- add_margin(p_D0, top    = 10, left  = 0)
+
+g_A <- set_clip_off(p_A)
+g_B <- set_clip_off(p_B)
+g_C <- set_clip_off(p_C)
+g_D <- set_clip_off(p_D)
+g <- ggplotGrob(p_A_legend)
+legend_index <- which(sapply(g$grobs, function(x) x$name) == "guide-box")
+legend <- g$grobs[[legend_index]]
+grid.draw(legend) 
+
+body <- arrangeGrob(g_A, g_B, g_C, g_D, ncol = 2)
+final_grob <- arrangeGrob(body, legend, ncol = 1, heights = c(0.92, 0.08))
+#END
