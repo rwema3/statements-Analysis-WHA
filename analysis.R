@@ -27,3 +27,33 @@ df_summary <- df_filtered %>%
   summarise(across(all_of(theme_cols), sum, na.rm = TRUE)) %>%
   column_to_rownames("speaker")
 ##END
+
+
+
+
+###-------P2-------------
+library(tidyverse)
+library(countrycode)
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
+
+save_dir <- "path/global attention"
+if (!dir.exists(save_dir)) dir.create(save_dir, recursive = TRUE)
+
+theme_cols <- c("ADP", "CAP", "EQU", "FIN", "GOV", 
+                "IMP", "LND", "MIT", "RSP", "TEC", "TRN")
+
+df_theme_iso <- df_filtered %>%
+  mutate(speaker = case_when(
+    speaker == "Columbia" ~ "Colombia",
+    speaker == "Micronesia" ~ "Micronesia (Federated States of)",
+    TRUE ~ speaker
+  )) %>%
+  mutate(iso3 = countrycode(speaker, "country.name", "iso3c")) %>%
+  filter(!is.na(iso3))
+
+world <- ne_countries(scale = "medium", returnclass = "sf")
+theme_cols <- c("ADP", "CAP", "EQU", "FIN", "GOV", 
+                "IMP", "LND", "MIT", "RSP", "TEC", "TRN")
+
