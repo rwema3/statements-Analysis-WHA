@@ -117,3 +117,27 @@ custom_iso <- c(
   "EU"  = "EUU", "EUR" = "EUU",
   "TWN" = "TWN"   
 )
+
+process_df <- function(df, date_col){
+  df %>% 
+    separate_rows(geographies, sep = ";|\\|") %>% 
+    mutate(geographies = str_trim(geographies)) %>% 
+    mutate(
+      iso3 = case_when(str_detect(geographies, "^[A-Z]{3}$") ~ geographies),
+      iso3 = coalesce(
+        iso3,
+        countrycode(geographies, "country.name", "iso3c",
+                    custom_match = custom_iso,
+                    warn = FALSE)
+      )
+    ) %>% 
+    filter(!is.na(iso3)) %>% 
+    mutate(year = as.integer(substr(.data[[date_col]], 1, 4))) %>% 
+    group_by(iso3, family_name, .drop = FALSE) %>% 
+    slice_min(year, with_ties = FALSE) %>% 
+    ungroup() %>% 
+    select(iso3,
+           country = geographies,
+           year,
+           file_name = document_title)
+}
