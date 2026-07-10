@@ -284,3 +284,19 @@ theme_group <- tibble(
     "Governance", "Equity &\n Empowerment",
     "Finance &\n Mobilization", "Technology &\n Innovation", "Mitigation",
     "Impacts &\n Co-benefits", "Response &\n Transition", "Loss & Damage"))
+
+df_long <- df_summary %>%
+  rownames_to_column("country") %>%
+  pivot_longer(-country, names_to = "theme", values_to = "mention") %>%
+  filter(mention > 0) %>%
+  left_join(theme_group,   by = "theme") %>%
+  left_join(UNFCCC_country, by = "country") %>%
+  drop_na(unfccc_group)                       
+df_long1 = df_long %>%
+  mutate(unfccc_group = case_when(
+    unfccc_group == "Emerging"           ~ "Emerging emitters",
+    unfccc_group == "OECD_Donor"         ~ "OECD donors",
+    unfccc_group == "Transition"         ~ "Transition economies",
+    unfccc_group == "Vulnerable"           ~ "Vulnerable group",
+    TRUE                         ~ as.character(unfccc_group)
+  ))
