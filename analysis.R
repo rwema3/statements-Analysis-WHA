@@ -300,3 +300,22 @@ df_long1 = df_long %>%
     unfccc_group == "Vulnerable"           ~ "Vulnerable group",
     TRUE                         ~ as.character(unfccc_group)
   ))
+
+
+make_rose <- function(df, group_label, show_legend = FALSE) {
+  df_group <- df %>%
+    filter(unfccc_group == group_label) %>%    # 列名更新
+    count(group, theme_full, name = "n") %>%
+    mutate(theme_full = fct_reorder(theme_full, n))
+  
+  if (nrow(df_group) == 0)
+    return(ggplot() + theme_void() + labs(title = paste0(group_label, " (no data)")))
+  
+  ggplot(df_group, aes(x = theme_full, y = n, fill = group)) +
+    geom_col(width = 1, colour = "white", alpha = .9) +
+    geom_text(aes(label = n, y = n + max(n) * 0.2), size = 4, colour = "black") +
+    ylim(0, max(df_group$n) * 1.03) +  
+    coord_polar(theta = "x", start = 0) +
+    scale_fill_manual(values = group_colors) +
+    theme_minimal(base_size = 12) +
+    labs(title = group_label, x = NULL, y = NULL, fill = NULL) +
