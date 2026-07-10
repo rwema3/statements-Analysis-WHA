@@ -225,3 +225,32 @@ p_h3_blue <- ggplot(df_h3, aes(group, fill = mismatch)) +
     breaks = seq(0, 1, .25),
     expand = expansion(mult = c(0, .05))
   ) +
+  scale_fill_manual(
+    values = c(
+      "Low-Policy / Low-Talk"  = "#4292c6",
+      "High-Policy / Low-Talk" = "#6baed6",
+      "Low-Policy / High-Talk" = "#bdd7e7",
+      "High-Policy / High-Talk"= "#08519c"
+    ),
+    name = "Mismatch Type"
+  ) +
+  labs(
+    x = "UNFCCC Group",
+    y = "Share of Countries",
+    title = ""
+  ) +
+  theme_classic(base_size = 13) +
+  theme(
+    panel.grid = element_blank(),
+    axis.ticks.length = unit(4, "pt"),
+    legend.position = "right",
+    axis.title.x = element_text(hjust = 0.5, size = 13, colour = "black", face = "bold"),
+    axis.title.y = element_text(hjust = 0.5, size = 13, colour = "black", face = "bold"),
+    axis.text.x = element_text(size= 13, colour = "black"),
+    axis.text.y = element_text(size= 13, colour = "black"),
+    axis.line = element_line(colour = "black")
+  ) +
+  guides(fill = guide_legend(nrow = 2, byrow = TRUE))
+p_h3_blue
+
+P3
