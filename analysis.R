@@ -209,3 +209,19 @@ chisq_h3 <- chisq.test(tab_h3)
 print(tab_h3)
 print(chisq_h3)
 
+multi_mod <- multinom(mismatch ~ income_grp, data = df_h3)
+summary(multi_mod)
+
+p_h3_blue <- ggplot(df_h3, aes(group, fill = mismatch)) +
+  geom_bar(position = "fill",
+           colour = "grey40",
+           width = .80) +
+  scale_x_discrete(
+    limits = c("OECD-Donor", "Transition", "Emerging", "Vulnerable"),
+    labels = c("OECD\n donors", "Transition\n economies", "Emerging\n emitters", "Vulnerable\n group")
+  ) +
+  scale_y_continuous(
+    labels = percent_format(),
+    breaks = seq(0, 1, .25),
+    expand = expansion(mult = c(0, .05))
+  ) +
