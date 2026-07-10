@@ -157,3 +157,36 @@ write_csv(pol_clean,  file.path(data_dir, "global_climate_policy_clean.csv"))
 write_csv(summary_tbl, file.path(data_dir, "global_climate_law_policy_summary.csv"))
 ##END
 
+
+#---------P3----------------
+policy_sum <- read_csv(
+  file.path(data_dir, "global_climate_law_policy_summary.csv"),
+  show_col_types = FALSE
+)
+policy_tot <- policy_sum %>% 
+  group_by(iso3) %>% 
+  summarise(policy_total = sum(policy_n, na.rm = TRUE), .groups = "drop") %>% 
+  filter(policy_total > 0) %>%                           
+  mutate(                                               
+    policy_cat = case_when(
+      policy_total >= 40 ~ "≥ 40",
+      policy_total >= 20 ~ "20–39",
+      policy_total >= 10 ~ "10–19",
+      policy_total >=  5 ~ "5–9",
+      TRUE               ~ "1–4"
+    )
+  )   
+
+df_h3 <- map_total |>                     
+  st_drop_geometry() |>                 
+  select(iso3 = iso_a3,
+         total_mentions,
+         income_grp) |>                  
+  left_join(policy_tot, by = "iso3") |>  
+  mutate(across(c(total_mentions, policy_total),
+                ~ replace_na(., 0)))   
+
+talk_thr   <- median(df_h3$total_mentions, na.rm = TRUE)
+policy_thr <- median(df_h3$policy_total  , na.rm = TRUE)
+
+y
